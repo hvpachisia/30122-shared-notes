@@ -2,7 +2,7 @@ import requests
 import lxml.html
 
 
-def get_html(fec_id):
+def get_html():
     """
     Return the HTML for a given committee from the FEC website.
     """
