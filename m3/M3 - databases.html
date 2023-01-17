@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.97">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>m3---databases</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="M3 - databases_files/libs/clipboard/clipboard.min.js"></script>
+<script src="M3 - databases_files/libs/quarto-html/quarto.js"></script>
+<script src="M3 - databases_files/libs/quarto-html/popper.min.js"></script>
+<script src="M3 - databases_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="M3 - databases_files/libs/quarto-html/anchor.min.js"></script>
+<link href="M3 - databases_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="M3 - databases_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="M3 - databases_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="M3 - databases_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="M3 - databases_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="module-3-storing-data" class="level1">
+<h1>Module 3: Storing Data</h1>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>We’ve now seen formats like JSON, CSV, and XML for storing data on disk.</p>
+<p>Imagine building an application that was getting continuous data updates:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_new_transaction(user_id, date, amount, note):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># In this fictional example, imagine we're storing data in a JSON object</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># . {"user_id": 12345,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    "balance": 7500.12,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    "transactions": [</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#       {"amount": 100, "note": "deposit", "date": "2023-01-01"},</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#       {"amount": -70, "note": "comcast", "date": "2023-01-11"},</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    ]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    }</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># load data from disk</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">"transactions.json"</span>) <span class="im">as</span> f:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> json.load(f)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># search for user</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> user_rec <span class="kw">in</span> data:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> user_rec[<span class="st">"user_id"</span>] <span class="op">==</span> user_id:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            user <span class="op">=</span> data[<span class="st">"user_id"</span>]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># update user</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    user[<span class="st">"transactions"</span>].append({</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"amount"</span>: amount,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"note"</span>: note,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>: date,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    user[<span class="st">"balance"</span>] <span class="op">+=</span> amount</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># save data back out to disk</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">"transactions.json"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        json.dump(data, f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>What issues exist with the above?</strong></p>
+<p>A database allows us to store data on disk and interact with subsets of it.</p>
+<p>Common tasks with data:</p>
+<ul>
+<li>Retrieval of specific records by criteria.</li>
+<li>Update one or more records at once.</li>
+<li>Delete records.</li>
+</ul>
+<p>In the simplest case, <code>sqlite3</code> for instance, a database can be a single file on disk. Not all databases work that way though, many times instead of dealing with a local file you would interact with a database over a network. We’ll see later that there is a common interface for interacting with databases that allows you to mostly ignore these differences.</p>
+</section>
+<section id="relational-databases" class="level2">
+<h2 class="anchored" data-anchor-id="relational-databases">Relational Databases</h2>
+<p>Relational databases came about in the 1970s, and are still the most popular type of database. We’ll see why.</p>
+<p>The core concepts of a relational database are:</p>
+<p><strong>Tables</strong> - A table is a collection of records of a similar type. (e.g.&nbsp;students, courses, grades would each be their own table) You can think of a table in some ways like a class in Python, in that it represents a distinct composite type.</p>
+<p><strong>Column</strong> - A column is a type of data that all records in a table have. (e.g.&nbsp;student ID, name, email, etc.)</p>
+<p><strong>Row</strong> - A row is a record in a table. Each row has a value for each column in that table. You can think of a row as a single piece of data, so one row per student, course, or grade. This would be the data represented by a single instance of a class in Python, or a dictionary or tuple.</p>
+<p>Two other concepts that’ll be important later:</p>
+<p><strong>Index</strong> - An index is a way to quickly find a record in a table without having to search through all the records. They can be a single row (e.g.&nbsp;student.id), or a combination of columns (e.g.&nbsp;student.first_name, student.last_name). Indexes are used to speed up queries, and are a key part of relational databases.</p>
+<p><strong>Foreign Key</strong> - A foreign key is a column in a table that references a column in another table. This is how you can link records in different tables together. For example, a student record might have a foreign key to a course record, so you can link a student to a course.</p>
+<p>Relational databases are built on a concept called <em>Relational Algebra</em>, which defines a series of operations that can be done on data. These operations are the basis for SQL, the language we’ll use to interact with relational databases.</p>
+<p><strong>SQL</strong> is a language for interacting with relational databases. It’s a declarative language, meaning that you tell the database what you want, and it figures out how to do it. SQL is a standard, and there are many different implementations of it with various features.</p>
+<section id="popular-relational-databases" class="level3">
+<h3 class="anchored" data-anchor-id="popular-relational-databases">Popular Relational Databases</h3>
+<ul>
+<li><p>SQLite - A lightweight database that is stored in a single file. It’s the most popular database for small applications, and is used all over the place. Unlike other databases, it doesn’t have a separate server process, it’s just a library that you link into your application. Python includes a built in <code>sqlite3</code> library for interacting with SQLite databases.</p></li>
+<li><p>PostgreSQL - A full-featured database that is used in many large applications. It’s a server process that you can connect to from your application. It has a lot of features that SQLite doesn’t, and is a terrific choice for larger applications. It has a robust set of available column types including JSON, arrays, text vectors, and geospatial data types.</p></li>
+<li><p>MySQL/MariaDB - Another full-featured database that is used in many large applications, was the most popular for a time but has been overtaken by PostgreSQL in the last few years.</p></li>
+<li><p>Oracle / MS SQL Server - Two popular commercial databases, typically only used in larger corporate environments. Unlike the above, not open source.</p></li>
+</ul>
+</section>
+<section id="sql" class="level3">
+<h3 class="anchored" data-anchor-id="sql">SQL</h3>
+<p>SQL is a declarative language, quite different from Python. In Python or similar languages, you tell the computer the steps to perform. In a declarative language like SQL, you tell the database what you want, and it figures out how to do it.</p>
+<p>SQL has a few different types of statements:</p>
+<ul>
+<li><strong>Data Definition Language (DDL)</strong> - Statements that define the structure of the database. These are used to create tables, add columns, and add indexes.</li>
+<li><strong>Data Manipulation Language (DML)</strong> - Statements that manipulate the data in the database. These are used to insert, update, and delete records.</li>
+<li><strong>Data Query Language (DQL)</strong> - Statements that query the data in the database. These are used to select records from the database.</li>
+</ul>
+<p>We’ll mostly be focusing on querying the database today, and a bit of DDL. You’ll be learning a lot more SQL next quarter, so don’t feel like you need to leave this module a SQL expert.</p>
+</section>
+<section id="sqlite" class="level3">
+<h3 class="anchored" data-anchor-id="sqlite">SQLite</h3>
+<p>Invoke <code>sqlite3</code> from the command line to start the shell, you can pass it a filename to open a database. Note that if the file doesn’t exist, it will be created. (This can cause issues if you mistype the path, so be mindful of it.)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>$ sqlite3 fec.db</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>SQLite version <span class="dv">3</span>.<span class="fl">37.0</span> <span class="dv">2021</span><span class="op">-</span><span class="dv">12</span><span class="op">-</span><span class="dv">09</span> <span class="dv">01</span><span class="ch">:34:53</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Enter <span class="ot">".help"</span> <span class="cf">for</span> <span class="kw">usage</span> hints.</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sqlite<span class="op">&gt;</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>sqlite&gt;</code> is the SQLlite prompt, you can type commands there, <strong>be sure to end them with a semicolon</strong>.</p>
+<section id="dot-commands" class="level4">
+<h4 class="anchored" data-anchor-id="dot-commands">Dot Commands</h4>
+<p>SQLite has a few special commands that are not part of the SQL standard, but are very useful. These are:</p>
+<ul>
+<li><code>.tables</code> - List all the tables in the database</li>
+<li><code>.schema &lt;table&gt;</code> - Show the schema for a table</li>
+<li><code>.header on</code> - Show column names in query results</li>
+<li><code>.mode column</code> - Show query results in columns. This is the default, you can also set mode to <code>line</code> or <code>list</code> to alter how output is shown.</li>
+<li><code>.quit</code> - Exit the SQLite shell</li>
+</ul>
+<p>Note: all of these commands start with a <code>.</code>, <code>.help</code> will list all of them.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sqlite<span class="op">&gt;</span> .<span class="kw">tables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sqlite<span class="op">&gt;</span> .<span class="kw">schema</span> candidate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+</section>
+<section id="select-statements" class="level2">
+<h2 class="anchored" data-anchor-id="select-statements">SELECT Statements</h2>
+<p>By convention, SQL keywords are written in all caps, and table and column names are written in lowercase. This is not required, but it’s a good convention to follow as it makes queries a bit more readable as you can more easily separate keywords from your table &amp; column names.</p>
+<p>To retrieve data from a table, you use a <code>SELECT</code> statement. The basic syntax resembles:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">&lt;</span><span class="kw">columns</span><span class="op">&gt;</span> <span class="kw">FROM</span> <span class="op">&lt;</span><span class="kw">table</span><span class="op">&gt;</span> [<span class="kw">WHERE</span> <span class="op">&lt;</span>condition<span class="op">&gt;</span>] [<span class="kw">LIMIT</span> <span class="op">&lt;</span><span class="fu">count</span><span class="op">&gt;</span>];</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>(Actually, a lot more than this <a href="https://www.sqlite.org/syntaxdiagrams.html#select-stmt" class="uri">https://www.sqlite.org/syntaxdiagrams.html#select-stmt</a>)</p>
+<p>The square brackets are a convention often used in documentation to indicate that something is optional. As we’ll see, the <code>WHERE</code> and <code>LIMIT</code> clauses are optional, and there are quite a few others that exist as well.</p>
+<section id="select" class="level3">
+<h3 class="anchored" data-anchor-id="select">SELECT *</h3>
+<p>The <code>*</code> character is a wildcard that can be used in place of a list of columns. It means “all columns”. So the following two queries are equivalent:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> candidate;</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> committee_id, lastname, firstname, party, city, state, zip, cand_id, district <span class="kw">FROM</span> candidate;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> candidate;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="operators" class="level3">
+<h3 class="anchored" data-anchor-id="operators">Operators</h3>
+<p>SQL has many operators that can be used in the <code>WHERE</code> clause:</p>
+<ul>
+<li><code>=</code> - Equal to</li>
+<li><code>&lt;&gt;</code> - Not equal to</li>
+<li><code>&gt;</code> - Greater than</li>
+<li><code>&lt;</code> - Less than</li>
+<li><code>&gt;=</code> - Greater than or equal to</li>
+<li><code>&lt;=</code> - Less than or equal to</li>
+<li><code>LIKE</code> - Matches a pattern. The pattern can contain the <code>%</code> character, which matches any number of characters. The <code>_</code> character matches a single character. The pattern is case insensitive.</li>
+<li><code>IN</code> - Matches any of a list of values. For example, <code>WHERE party IN ('REP', 'DEM')</code> would match any record where the party is either <code>REP</code> or <code>DEM</code>.</li>
+<li>AND - Logical AND. For example, <code>WHERE party = 'REP' AND state = 'CA'</code> would match any record where the party is <code>REP</code> and the state is <code>CA</code>.</li>
+<li>OR - Logical OR. For example, <code>WHERE party = 'REP' OR party = 'DEM'</code> would match any record where the party is either <code>REP</code> or <code>DEM</code>.</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> lastname, firstname <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> party <span class="op">=</span> <span class="st">'REP'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> lastname, firstname <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> lastname <span class="op">&gt;</span> <span class="st">'Z'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="column-names" class="level3">
+<h3 class="anchored" data-anchor-id="column-names">Column Names</h3>
+<p>Can of course specify a list of columns to return:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> lastname, firstname, party <span class="kw">FROM</span> candidate;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="limit" class="level3">
+<h3 class="anchored" data-anchor-id="limit">LIMIT</h3>
+<p>That’s a lot of candidates, let’s limit the results to 5:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> lastname, firstname, party <span class="kw">FROM</span> candidate <span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>(You can also use <code>LIMIT &lt;offset&gt;, &lt;count&gt;</code> to skip the first <code>&lt;offset&gt;</code> rows, and return <code>&lt;count&gt;</code> rows after that.)</p>
+</section>
+<section id="where" class="level3">
+<h3 class="anchored" data-anchor-id="where">WHERE</h3>
+<p>The <code>WHERE</code> clause is used to filter the results of a query. It’s a condition that must be true for a record to be returned.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> lastname, firstname, party <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> party <span class="op">=</span> <span class="st">'REP'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="functions-aliases" class="level3">
+<h3 class="anchored" data-anchor-id="functions-aliases">Functions &amp; Aliases</h3>
+<p>You can use functions in the <code>SELECT</code> clause to transform the data.</p>
+<ul>
+<li><code>COUNT</code> - Returns the number of rows in the result set</li>
+<li><code>SUM</code> - Returns the sum of the values in a column</li>
+<li><code>AVG</code> - Returns the average of the values in a column</li>
+<li><code>MIN</code> - Returns the minimum value in a column</li>
+<li><code>MAX</code> - Returns the maximum value in a column</li>
+</ul>
+<p>The most common function is <code>COUNT</code>, which returns the number of rows in the result set.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> party <span class="op">=</span> <span class="st">'REP'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The resulting column name will be the function name (e.g.&nbsp;<code>count</code>), so you can use an <code>AS</code> clause to give it a more meaningful name.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> rep_count <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> party <span class="op">=</span> <span class="st">'REP'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="group-by" class="level3">
+<h3 class="anchored" data-anchor-id="group-by">GROUP BY</h3>
+<p>The <code>GROUP BY</code> clause is used for aggregating multiple rows into a single row. It’s often used with aggregate functions like <code>COUNT</code> and <code>SUM</code>.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> party, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="fu">count</span> <span class="kw">FROM</span> candidate <span class="kw">GROUP</span> <span class="kw">BY</span> party;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="order-by" class="level3">
+<h3 class="anchored" data-anchor-id="order-by">ORDER BY</h3>
+<p>The <code>ORDER BY</code> clause is used to sort the results of a query. By default, the results are sorted in ascending order. To sort in descending order, use <code>DESC</code> after the column name. You can sort by column name, or by the result of a function by refering to its alias.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> party, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="fu">count</span> <span class="kw">FROM</span> candidate <span class="kw">GROUP</span> <span class="kw">BY</span> party <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="fu">count</span> <span class="kw">DESC</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can combine these clauses to get the top 5 parties by number of candidates:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> party, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="fu">count</span> <span class="kw">FROM</span> candidate <span class="kw">GROUP</span> <span class="kw">BY</span> party <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="fu">count</span> <span class="kw">DESC</span> <span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="having" class="level3">
+<h3 class="anchored" data-anchor-id="having">HAVING</h3>
+<p>The <code>HAVING</code> clause is used to filter the results of a <code>GROUP BY</code> query. It’s similar to the <code>WHERE</code> clause, but it’s used to filter the results of a <code>GROUP BY</code> query.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> party, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="fu">count</span> <span class="kw">FROM</span> candidate <span class="kw">GROUP</span> <span class="kw">BY</span> party <span class="kw">HAVING</span> <span class="fu">count</span> <span class="op">&gt;</span> <span class="dv">50</span> <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="fu">count</span> <span class="kw">DESC</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="demo-run-some-queries-on-contribution" class="level3">
+<h3 class="anchored" data-anchor-id="demo-run-some-queries-on-contribution">Demo: Run Some Queries on Contribution</h3>
+<ol type="1">
+<li>Total amount of contributions made by residents of each state.</li>
+<li>Which state made the most contributions?</li>
+<li>Min contribution , reveals issue w/ -1 in amount</li>
+</ol>
+</section>
+</section>
+<section id="joins" class="level2">
+<h2 class="anchored" data-anchor-id="joins">Joins</h2>
+<p>What if we have two tables and we want to query data across both of them?</p>
+<p><strong>Employee</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>salary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>100000</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>85000</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>120000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Paychecks</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>check_id</th>
+<th>employee_id</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1001</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>1002</td>
+<td>2</td>
+<td>7083.33</td>
+</tr>
+<tr class="odd">
+<td>1003</td>
+<td>4</td>
+<td>10000.00</td>
+</tr>
+<tr class="even">
+<td>1004</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+</tbody>
+</table>
+<p>If we add both columns to the SELECT statement, we get:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>salary</th>
+<th>check_id</th>
+<th>employee_id</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>100000</td>
+<td>1001</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>100000</td>
+<td>1002</td>
+<td>2</td>
+<td>7083.33</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>100000</td>
+<td>1003</td>
+<td>4</td>
+<td>10000.00</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>100000</td>
+<td>1004</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>85000</td>
+<td>1001</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>85000</td>
+<td>1002</td>
+<td>2</td>
+<td>7083.33</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>85000</td>
+<td>1003</td>
+<td>4</td>
+<td>10000.00</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>85000</td>
+<td>1004</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>120000</td>
+<td>1001</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>120000</td>
+<td>1002</td>
+<td>2</td>
+<td>7083.33</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>120000</td>
+<td>1003</td>
+<td>4</td>
+<td>10000.00</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>120000</td>
+<td>1004</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+</tbody>
+</table>
+<p>This is the <strong>cross product</strong> of the two tables. It’s the result of multiplying the number of rows in each table. It’s not very useful.</p>
+<section id="inner-join" class="level3">
+<h3 class="anchored" data-anchor-id="inner-join">Inner Join</h3>
+<p>The <code>JOIN</code> keyword is used to compute the intersection of two tables along some criteria. This depends on them having a common column or columns.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employee <span class="kw">JOIN</span> paycheck <span class="kw">ON</span> employee.<span class="kw">id</span> <span class="op">=</span> paycheck.employee_id;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>salary</th>
+<th>check_id</th>
+<th>employee_id</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>100000</td>
+<td>1001</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>100000</td>
+<td>1004</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>85000</td>
+<td>1002</td>
+<td>2</td>
+<td>7083.33</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>120000</td>
+<td>1003</td>
+<td>4</td>
+<td>10000.00</td>
+</tr>
+</tbody>
+</table>
+<p>It is common in practice for column names to overlap in tables. If you need to disambiguate, you can refer to columns like we did above <code>table.column</code> (e.g.&nbsp;<code>employee.id</code>), you can also use the <code>AS</code> keyword to rename tables &amp; columns.</p>
+<pre><code>&gt; SELECT e.id, e.salary, p.check_id, p.amount FROM employee AS e JOIN paycheck AS p ON e.id = p.id;</code></pre>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>salary</th>
+<th>check_id</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>100000</td>
+<td>1001</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>100000</td>
+<td>1004</td>
+<td>8333.33</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>85000</td>
+<td>1002</td>
+<td>7083.33</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>120000</td>
+<td>1003</td>
+<td>10000.00</td>
+</tr>
+</tbody>
+</table>
+<p>(We also dropped the redundant <code>employee_id</code> column from our output.)</p>
+</section>
+<section id="left-join" class="level3">
+<h3 class="anchored" data-anchor-id="left-join">Left Join</h3>
+<p>The <code>LEFT JOIN</code> keyword returns all rows from the left table, and the matching rows from the right table. If there is no match, the right table columns will be <code>NULL</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employee <span class="kw">LEFT</span> <span class="kw">JOIN</span> paycheck <span class="kw">ON</span> employee.<span class="kw">id</span> <span class="op">=</span> paycheck.employee_id;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>salary</th>
+<th>check_id</th>
+<th>employee_id</th>
+<th>amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>100000</td>
+<td>1001</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>100000</td>
+<td>1004</td>
+<td>1</td>
+<td>8333.33</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>85000</td>
+<td>1002</td>
+<td>2</td>
+<td>7083.33</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>75000</td>
+<td>NULL</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>120000</td>
+<td>1003</td>
+<td>4</td>
+<td>10000.00</td>
+</tr>
+</tbody>
+</table>
+<p>There is also a <code>RIGHT JOIN</code> which is the same as a <code>LEFT JOIN</code> but with the tables reversed, and a <code>FULL JOIN</code> which returns all rows from both tables. These are less common and not supported by SQLite.</p>
+</section>
+<section id="demo-run-some-joins-on-contribution" class="level3">
+<h3 class="anchored" data-anchor-id="demo-run-some-joins-on-contribution">Demo: Run Some Joins on Contribution</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">from</span> candidate, contribution <span class="kw">ON</span> candidate.cand_id <span class="op">=</span> contribution.cand_id;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Lots of unnecessary information, let’s use projection to get the columns we want.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> cand.lastname, cand.firstname, cand.state <span class="kw">AS</span> cand_state, cont.state <span class="kw">AS</span> cont_state, cont.amount  </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>   <span class="kw">FROM</span> candidate <span class="kw">AS</span> cand <span class="kw">JOIN</span> contribution <span class="kw">AS</span> cont </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>   <span class="kw">ON</span> cand.cand_id <span class="op">=</span> cont.cand_id;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Top 3 by contributions:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> candidate.cand_id, lastname, firstname, <span class="fu">SUM</span>(amount) <span class="kw">AS</span> total </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>   <span class="kw">FROM</span> candidate <span class="kw">JOIN</span> contribution </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>   <span class="kw">ON</span> candidate.cand_id <span class="op">=</span> contribution.cand_id</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">GROUP</span> <span class="kw">BY</span> candidate.cand_id </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>   <span class="kw">ORDER</span> <span class="kw">BY</span> total <span class="kw">DESC</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>   <span class="kw">LIMIT</span> <span class="dv">3</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Top 3 in state:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> candidate cand.id_lastname, firstname, <span class="fu">SUM</span>(amount) <span class="kw">AS</span> total </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> candidate, contribution <span class="kw">ON</span> candidate.cand_id <span class="op">=</span> contribution.cand_id</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> candidate.state <span class="op">=</span> contribution.state</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> candidate.cand_id</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ORDER</span> <span class="kw">BY</span> total <span class="kw">DESC</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LIMIT</span> <span class="dv">3</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="ddl" class="level2">
+<h2 class="anchored" data-anchor-id="ddl">DDL</h2>
+<p>Let’s take a look at how to create a table:</p>
+<section id="creating-tables" class="level3">
+<h3 class="anchored" data-anchor-id="creating-tables">Creating Tables</h3>
+<p>Each table has a schema that defines the columns and their types. The schema is created using the <code>CREATE TABLE</code> statement.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> candidate</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  (committee_id <span class="dt">varchar</span>(<span class="dv">10</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>   lastname <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>   firstname <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>   party <span class="dt">varchar</span>(<span class="dv">6</span>),</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>   city <span class="dt">varchar</span>(<span class="dv">20</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>   state <span class="dt">varchar</span>(<span class="dv">2</span>),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>   zip <span class="dt">integer</span>,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>   cand_id <span class="dt">varchar</span>(<span class="dv">10</span>),</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>   district <span class="dt">varchar</span>(<span class="dv">2</span>),</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>   <span class="kw">constraint</span> pk_candidate <span class="kw">primary</span> <span class="kw">key</span> (committee_id));</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> contribution</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  (cand_id <span class="dt">varchar</span>(<span class="dv">10</span>),</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>   amount <span class="dt">integer</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>   city <span class="dt">varchar</span>(<span class="dv">20</span>),</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>   state <span class="dt">varchar</span>(<span class="dv">10</span>),</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>   zip <span class="dt">integer</span>,</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>   <span class="dt">month</span> <span class="dt">integer</span>,</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>   <span class="dt">year</span> <span class="dt">integer</span>,</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>   <span class="kw">constraint</span> fk_contribution <span class="kw">foreign</span> <span class="kw">key</span> (cand_id)</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">references</span> candidate (cand_id));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Each table is a tuple of named types as well as any constraints on the data.</p>
+<p>Types:</p>
+<ul>
+<li><code>varchar(n)</code> - a string that can be up to length <code>n</code> characters.</li>
+<li><code>text</code> - a string of arbitrary length</li>
+<li><code>integer</code> - an integer</li>
+<li><code>real</code> - a floating point number</li>
+</ul>
+<p><strong>Major Caveat</strong></p>
+<p>SQLite doesn’t really care much about types, for instance, it doesn’t actually enforce varchar lengths, and will happily store non-numeric data in integer columns. It’s up to you to make sure your data is valid.</p>
+<p>In newer versions of SQLite you can add the <code>STRICT</code> qualifier to the end of a <code>CREATE TABLE</code> statement to make SQLite enforce types. Every other major database (Postgres, MySQL, etc.) will enforce types.</p>
+<p><a href="https://www.sqlite.org/stricttables.html" class="uri">https://www.sqlite.org/stricttables.html</a></p>
+</section>
+<section id="indexes" class="level3">
+<h3 class="anchored" data-anchor-id="indexes">Indexes</h3>
+<p>Indexes tell the database to use additional space to help speed up queries. When an indexed column is used in a query, the database can use the index to quickly find the rows that match the query.</p>
+<p>Another DDL statement lets us create an index:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_name <span class="kw">ON</span> candidate (lastname, firstname);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This would speed up queries that use both <code>lastname</code> and <code>firstname</code> in a <code>WHERE</code> clause. (Some databases may also be able to use the index for queries that use only one of the columns, but this isn’t guaranteed.)</p>
+</section>
+<section id="primary-keys" class="level3">
+<h3 class="anchored" data-anchor-id="primary-keys">Primary Keys</h3>
+<p>Every table should have a primary key. This is an indexed column that should uniquely identify the data. It is common to use an auto-incrementing integer as the primary key.</p>
+</section>
+<section id="foreign-keys" class="level3">
+<h3 class="anchored" data-anchor-id="foreign-keys">Foreign Keys</h3>
+<p>Foreign keys are used to link data across tables. They are indexed columns that should match the primary key of another table.</p>
+</section>
+<section id="not-null" class="level3">
+<h3 class="anchored" data-anchor-id="not-null">NOT NULL</h3>
+<p>The <code>NOT NULL</code> constraint tells the database that a column cannot be <code>NULL</code>. This is useful for columns that should always have a value. (Note that the default is to allow NULL values everywhere except primary keys.)</p>
+</section>
+</section>
+<section id="dml" class="level2">
+<h2 class="anchored" data-anchor-id="dml">DML</h2>
+<section id="inserting-data" class="level3">
+<h3 class="anchored" data-anchor-id="inserting-data">Inserting Data</h3>
+<p>The <code>INSERT</code> statement is used to add new rows to a table.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> candidate (committee_id, lastname, firstname, party, city, state, zip, cand_id, district)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (<span class="st">'C00999999'</span>, <span class="st">'Wayne'</span>, <span class="st">'Bruce'</span>, <span class="st">'Independent'</span>, <span class="st">'Gotham'</span>, <span class="st">'IL'</span>, <span class="st">'60606'</span>, <span class="st">'P80009999'</span>, <span class="st">'03'</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="updating-data" class="level3">
+<h3 class="anchored" data-anchor-id="updating-data">Updating Data</h3>
+<p>The <code>UPDATE</code> statement is used to change the values of existing rows.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> candidate <span class="kw">SET</span> party <span class="op">=</span> <span class="st">'Republican'</span> <span class="kw">WHERE</span> cand_id <span class="op">=</span> <span class="st">'P80003338'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Warning</strong></p>
+<p>Like <code>SELECT</code>, you can leave a <code>WHERE</code> clause off of <code>UPDATE</code> and <code>DELETE</code> statements. This will update or delete all rows in the table.</p>
+<p>Many people like to add a <code>LIMIT</code> clause to <code>UPDATE</code> and <code>DELETE</code> statements to make sure they don’t accidentally delete or update too many rows.</p>
+<p>Another tip is to write your WHERE clause first, so you don’t forget it.</p>
+</section>
+<section id="deleting-data" class="level3">
+<h3 class="anchored" data-anchor-id="deleting-data">Deleting Data</h3>
+<p>The <code>DELETE</code> statement is used to remove rows from a table.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> cand_id <span class="op">=</span> <span class="st">'P80003338'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If there is related data and you have proper constraints, this will fail until those rows are deleted first. There are a number of ways to handle this, but the most common is to use <code>ON DELETE CASCADE</code> in the foreign key constraint if desired.</p>
+</section>
+</section>
+<section id="sql-from-python" class="level2">
+<h2 class="anchored" data-anchor-id="sql-from-python">SQL From Python</h2>
+<section id="sqlite3" class="level3">
+<h3 class="anchored" data-anchor-id="sqlite3"><code>sqlite3</code></h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> sqlite3</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> conn <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">'fec.db'</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur <span class="op">=</span> conn.cursor()</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur.execute(<span class="st">'SELECT * FROM candidate LIMIT 3'</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="cf">for</span> row <span class="kw">in</span> cur.fetchall():</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>...     <span class="bu">print</span>(row)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>(<span class="st">'H0AK00089'</span>, <span class="st">'CRAWFORD'</span>, <span class="st">' HARRY T JR'</span>, <span class="st">'DEM'</span>, <span class="st">'ANCHORAGE'</span>, <span class="st">'AK'</span>, <span class="dv">99504</span>, <span class="st">'C00466698'</span>, <span class="st">'00'</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>(<span class="st">'H0AK00097'</span>, <span class="st">'COX'</span>, <span class="st">' JOHN R.'</span>, <span class="st">'REP'</span>, <span class="st">'ANCHOR POINT'</span>, <span class="st">'AK'</span>, <span class="dv">99556</span>, <span class="st">''</span>, <span class="st">'00'</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>(<span class="st">'H0AK01038'</span>, <span class="st">'FISHER'</span>, <span class="st">' SHELDON ALLRED'</span>, <span class="st">'REP'</span>, <span class="st">'ANCHORAGE'</span>, <span class="st">'AK'</span>, <span class="dv">99517</span>, <span class="st">'C00474783'</span>, <span class="st">'01'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This returns tuples, you can get the column names from cur.description. It is generally easier to use the <code>row_factory</code> to return <code>Row</code> objects instead of tuples.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> sqlite3</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> conn <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">'fec.db'</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> conn.row_factory <span class="op">=</span> sqlite3.Row</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur <span class="op">=</span> conn.cursor()</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur.execute(<span class="st">'SELECT * FROM candidate LIMIT 3'</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="cf">for</span> row <span class="kw">in</span> cur.fetchall():</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>...     <span class="bu">print</span>(row[<span class="st">'firstname'</span>], row[<span class="st">'lastname'</span>])</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>HARRY T JR CRAWFORD</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>JOHN R. COX</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>SHELDON ALLRED FISHER</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>These objects work like dictionaries, and you can access the columns by name.</p>
+</section>
+<section id="injection-placeholders" class="level3">
+<h3 class="anchored" data-anchor-id="injection-placeholders">Injection &amp; Placeholders</h3>
+<p>It is common to use some user input to build a query, such as in a search form. Doing this naively can lead to SQL injection attacks.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> sqlite3</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> conn <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">'fec.db'</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur <span class="op">=</span> conn.cursor()</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> search_string <span class="op">=</span> <span class="st">"Jane"</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> query <span class="op">=</span> <span class="st">"SELECT * FROM candidate WHERE firstname = '"</span> <span class="op">+</span> search_string <span class="op">+</span> <span class="st">"'"</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur.execute(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is vulnerable to SQL injection attacks. If the user enters <code>'; DROP TABLE candidate; --</code> as the search string, the query will be:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> candidate <span class="kw">WHERE</span> firstname <span class="op">=</span> <span class="st">''</span>; <span class="kw">DROP</span> <span class="kw">TABLE</span> candidate; <span class="co">--'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This will drop the candidate table. The <code>--</code> at the end of the string is a comment, so the rest of the query is ignored.</p>
+<p>To avoid this, you should use placeholders in your query, and pass the values as a tuple to <code>execute</code>.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> sqlite3</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> conn <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">'fec.db'</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur <span class="op">=</span> conn.cursor()</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> search_string <span class="op">=</span> <span class="st">"Jane"</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> query <span class="op">=</span> <span class="st">"SELECT * FROM candidate WHERE firstname = ?"</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> cur.execute(query, (search_string,))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This will pass the value as a tuple, and the database will escape it properly, ensuring that special characters like <code>'</code> and <code>;</code> are escaped and not parsed as part of the query itself.</p>
+<p>This has the added benefit of making your code more readable with a prepared statement working as a sort of function where you can plug in necessary parameters.</p>
+</section>
+</section>
+<section id="database-design" class="level2">
+<h2 class="anchored" data-anchor-id="database-design">Database Design</h2>
+<p><strong>Normalization</strong> - Structuring data to reduce duplication.</p>
+<p><strong>Denormalization</strong> - Structuring data to reduce joins.</p>
+<p>Let’s imagine a fictional company database.</p>
+<p>In our company, every employee has a first &amp; last name, an email, salary, and works for a department, where they have a title.</p>
+<p>We could try to model this with one table:</p>
+<ul>
+<li>employee ( id, first_name, last_name, email, salary, department_name, title )</li>
+</ul>
+<p>We decide we want each department to have a manager, so we add a manager_id column.</p>
+<ul>
+<li>employee ( id, first_name, last_name, email, salary, department_name, title, manager_id )</li>
+</ul>
+<p>This data is now redundant. If we have 100 employees in the “Research &amp; Development” department, we’re storing that name 100 times and the manager ID as well. A subtle bug in our code could also lead to these getting out of sync with one another since they always need to be updated together.</p>
+<p>We can fix this by creating a separate table for departments:</p>
+<ul>
+<li>department ( id, name, manager_id )</li>
+<li>employee ( id, first_name, last_name, email, salary, department_id, title )
+<ul>
+<li>foreign key ( department_id ) references department ( id )</li>
+</ul></li>
+</ul>
+<p>This is a step in the direction of normalization. We’ve removed the redundant data, but we’ve also added a new table and a new column. We’ve also added a new foreign key constraint.</p>
+<p>Hooray! This seems fantastic, let’s keep doing it! We can continue to normalize this data by creating a separate table for titles and salaries:</p>
+<ul>
+<li>department ( id, name, manager_id )</li>
+<li>employee ( id, first_name, last_name, email, department_id )
+<ul>
+<li>foreign key ( department_id ) references department ( id )</li>
+</ul></li>
+<li>employee_title ( employee_id, title )
+<ul>
+<li>foreign key ( employee_id ) references employee ( id )</li>
+</ul></li>
+<li>employee_salary ( employee_id, salary )
+<ul>
+<li>foreign key ( employee_id ) references employee ( id )</li>
+</ul></li>
+</ul>
+<p>This may seem like we’ve gone too far. Querying our data is now much more complicated, we’ll typically need 3-4 joins to get the data we want.</p>
+<p>Here’s an example of listing all employees in a department, with their title and salary:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> e.first_name, e.last_name, t.title, s.salary</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employee e</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> employee_title t <span class="kw">ON</span> t.employee_id <span class="op">=</span> e.<span class="kw">id</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> employee_salary s <span class="kw">ON</span> s.employee_id <span class="op">=</span> e.<span class="kw">id</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span> department d <span class="kw">ON</span> d.<span class="kw">id</span> <span class="op">=</span> e.department_id</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> d.name <span class="op">=</span> <span class="st">'Research &amp; Development'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>But we’ve also made our data more flexible. We can now store multiple titles for an employee, we could also add additional fields to the employee_salary table such as the date the salary was effective, or the date the salary was changed.</p>
+<ul>
+<li>department ( id, name, manager_id )</li>
+<li>employee ( id, first_name, last_name, email, department_id )
+<ul>
+<li>foreign key ( department_id ) references department ( id )</li>
+</ul></li>
+<li>employee_title ( employee_id, title, effective_date )
+<ul>
+<li>foreign key ( employee_id ) references employee ( id )</li>
+</ul></li>
+<li>employee_salary ( employee_id, salary, effective_date )
+<ul>
+<li>foreign key ( employee_id ) references employee ( id )</li>
+</ul></li>
+</ul>
+<section id="design-issues" class="level3">
+<h3 class="anchored" data-anchor-id="design-issues">Design Issues</h3>
+<p>We want to make a table for students &amp; activities:</p>
+<section id="step-one" class="level4">
+<h4 class="anchored" data-anchor-id="step-one">Step One</h4>
+<p><strong>student_activities</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>name</th>
+<th>activity1</th>
+<th>cost1</th>
+<th>activity2</th>
+<th>cost2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>John</td>
+<td>Soccer</td>
+<td>10</td>
+<td>Baseball</td>
+<td>20</td>
+</tr>
+<tr class="even">
+<td>Jane</td>
+<td>Baseball</td>
+<td>10</td>
+<td>Soccer</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>Alex</td>
+<td>Golf</td>
+<td>30</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+<tr class="even">
+<td>Jane</td>
+<td>Hockey</td>
+<td>30</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+</tbody>
+</table>
+<p>Problems:</p>
+<ul>
+<li>Non-unique records</li>
+</ul>
+</section>
+<section id="step-two" class="level4">
+<h4 class="anchored" data-anchor-id="step-two">Step Two</h4>
+<p>Could split into two tables:</p>
+<p><strong>student</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>John</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Jane</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Alex</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Jane</td>
+</tr>
+</tbody>
+</table>
+<p>(we now know this is a different Jane)</p>
+<p><strong>student_activities</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>activity1</th>
+<th>cost1</th>
+<th>activity2</th>
+<th>cost2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Soccer</td>
+<td>10</td>
+<td>Baseball</td>
+<td>20</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Baseball</td>
+<td>10</td>
+<td>Soccer</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Golf</td>
+<td>30</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Hockey</td>
+<td>30</td>
+<td>NULL</td>
+<td>NULL</td>
+</tr>
+</tbody>
+</table>
+<p>Problems:</p>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" checked="">Non-unique records~</li>
+<li><input type="checkbox" disabled="">Wasted space (NULLs)</li>
+<li><input type="checkbox" disabled="">Limited number of activity spots</li>
+<li><input type="checkbox" disabled="">How to find all students who play soccer? Search both columns</li>
+</ul>
+</section>
+<section id="step-three" class="level4">
+<h4 class="anchored" data-anchor-id="step-three">Step Three</h4>
+<p><strong>student</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>John</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Jane</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Alex</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Jane</td>
+</tr>
+</tbody>
+</table>
+<p><strong>student_activity</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>student_id</th>
+<th>activity</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Soccer</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>Baseball</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>Baseball</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Soccer</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Golf</td>
+<td>30</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Hockey</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p>Issues:</p>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" checked="">Non-unique records~</li>
+<li><input type="checkbox" disabled="" checked="">Wasted space (NULLs)</li>
+<li><input type="checkbox" disabled="" checked="">Limited number of activity spots</li>
+<li><input type="checkbox" disabled="" checked="">How to find all students who play soccer? Search both columns</li>
+<li><input type="checkbox" disabled="">Prices are not guaranteed to be consistent</li>
+<li><input type="checkbox" disabled="">How to update prices?</li>
+<li><input type="checkbox" disabled="">If student drops golf, we can lose the price.</li>
+<li><input type="checkbox" disabled="">No way to make new activities visible.</li>
+</ul>
+</section>
+<section id="step-four" class="level4">
+<h4 class="anchored" data-anchor-id="step-four">Step Four</h4>
+<p><strong>students</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>John</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Jane</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Alex</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Jane</td>
+</tr>
+</tbody>
+</table>
+<p><strong>activities</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>name</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Soccer</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Baseball</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Golf</td>
+<td>30</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Hockey</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p><strong>student_activity</strong></p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>student_id</th>
+<th>activity_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="tips" class="level3">
+<h3 class="anchored" data-anchor-id="tips">Tips</h3>
+<p><strong>One table per entity</strong> - The major <strong>nouns</strong> in your application should be represented by tables.</p>
+<p><strong>One-to-many relationships</strong> - When you have a relationship that is one-to-many (e.g.&nbsp;a user has many photos), the many side should have a foreign key to the one side.</p>
+<p>A user has many photos. This can be thought of as a one-to-many relationship, since each photo was uploaded by <em>one</em> user, but a user can have as many photos as they want.</p>
+<ul>
+<li>user ( id, name, email )</li>
+<li>photo ( id, user_id, url )
+<ul>
+<li>foreign key ( user_id ) references user ( id )</li>
+</ul></li>
+</ul>
+<p><strong>Many-to-many relationships</strong> - Require an intermediate join table like <code>student_activity</code> above.</p>
+<p>A user can belong to many groups, and a group of course has multiple users.</p>
+<ul>
+<li>user ( id, name, email )</li>
+<li>group ( id, name, description )</li>
+<li>group_membership ( user_id, group_id )
+<ul>
+<li>foreign key ( user_id ) references user ( id )</li>
+<li>foreign key ( group_id ) references group ( id )</li>
+</ul></li>
+</ul>
+<p>Note: It is possible to have additional data on the join table, such as the date the user joined the group.</p>
+<p><strong>One-to-one relationships</strong> - When you have a relationship that is one-to-one (e.g.&nbsp;a user has one profile), the one side should have a foreign key to the other side.</p>
+<p>These are less common, since it often makes sense to just store the data in a 1:1 relationship on a single table.</p>
+</section>
+</section>
+<section id="non-relational-databases" class="level2">
+<h2 class="anchored" data-anchor-id="non-relational-databases">Non-Relational Databases</h2>
+<p>An old concept that had mostly fallen out of favor until ~2009, when it was rediscovered and became popular again.</p>
+<p><strong>Document databases</strong> like MongoDB and CouchDB allow you to store “documents” (JSON objects) in a database. These documents can be nested, and can contain arrays.</p>
+<ul>
+<li>Highly-flexible schemas (for better or worse)</li>
+<li>Easy to store nested data &amp; arrays</li>
+<li>Often used for storing JSON data, which is common in web applications as we’ve seen.</li>
+</ul>
+<p><strong>Key-value stores</strong> like Redis allow you to store key-value pairs in a database. These are often used for caching, or for storing configuration data. They are very fast but much less flexible than other databases.</p>
+<ul>
+<li>Very fast</li>
+<li>Very limited operations (often just get/set/count)</li>
+<li>Often used for caching</li>
+</ul>
+<p><strong>Graph databases</strong> like Neo4j allow you to store nodes and relationships between them. These are often used for social networks, or for storing data that is naturally represented as a graph. They are highly specialized, but excellent for their particular use cases.</p>
+<p><strong>Wide-column stores</strong> like Cassandra allow you to store data in a column-oriented fashion. This is often used for storing large amounts of data, or for storing data that is naturally represented in a columnar fashion.</p>
+<p><strong>Search databases</strong> like ElasticSearch allow you to store data and then do full text search on it. This is often used for storing large amounts of data that needs to be searched.</p>
+</section>
+<section id="postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="postgresql">PostgreSQL</h2>
+<p>In the last few years PostgreSQL has become dominant among open-source relational databases. It is a very powerful, mature, and flexible database.</p>
+<p>It has some terrific features we don’t have time to go over, but that make it a great choice for many applications:</p>
+<ul>
+<li><strong>Full-text search</strong> - support for special indexes that allow optimized full text search (much more flexible and faster than using LIKE).</li>
+<li><strong>JSON support</strong> - this allows you to have columns that are JSON objects, essentially allowing a document database inside of your relational database.</li>
+<li><strong>Geospatial support</strong> - this allows you to store latitude/longitude coordinates, polygons, etc. and do geospatial queries on them.</li>
+<li><strong>Foreign data wrappers</strong> - this allows you to connect to other databases and query them as if they were tables in your database.</li>
+</ul>
+</section>
+<section id="orms" class="level2">
+<h2 class="anchored" data-anchor-id="orms">ORMs</h2>
+<p><strong>Object-relational mapping</strong> (ORM) is a technique that allows you to write code in an object-oriented language (e.g.&nbsp;Ruby, Python, Java, C#, etc.) and have it automatically translate to SQL queries.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQLalchemy</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Student(db.Model):</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span> <span class="op">=</span> db.Column(db.Integer, primary_key<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> db.Column(db.String(<span class="dv">80</span>), unique<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    grade <span class="op">=</span> db.Column(db.Integer)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    email <span class="op">=</span> db.Column(db.String(<span class="dv">120</span>), unique<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Classroom(db.Model):</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span> <span class="op">=</span> db.Column(db.Integer, primary_key<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> db.Column(db.String(<span class="dv">80</span>), unique<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    students <span class="op">=</span> db.relationship(<span class="st">'Student'</span>, secondary<span class="op">=</span><span class="st">'student_classroom'</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StudentClassroom(db.Model):</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span> <span class="op">=</span> db.Column(db.Integer, primary_key<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    student_id <span class="op">=</span> db.Column(db.Integer, db.ForeignKey(<span class="st">'student.id'</span>))</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>    classroom_id <span class="op">=</span> db.Column(db.Integer, db.ForeignKey(<span class="st">'classroom.id'</span>))</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co"># get all students named Jane</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> student <span class="kw">in</span> Student.query.filter_by(name<span class="op">=</span><span class="st">'Jane'</span>).<span class="bu">all</span>():</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(student.name)</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co"># get all students in "Chemistry 101"</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>Student.query.join(StudentClassroom).join(Classroom).<span class="bu">filter</span>(Classroom.name <span class="op">==</span> <span class="st">'Chemistry 101'</span>).<span class="bu">all</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Django ORM</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Student(models.Model):</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> models.CharField(max_length<span class="op">=</span><span class="dv">80</span>, unique<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    grade <span class="op">=</span> models.IntegerField()</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    email <span class="op">=</span> models.EmailField()</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Classroom(models.Model):</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> models.CharField(max_length<span class="op">=</span><span class="dv">80</span>, unique<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    students <span class="op">=</span> models.ManyToManyField(Student)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get all students named Jane</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> student <span class="kw">in</span> Student.objects.<span class="bu">filter</span>(name<span class="op">=</span><span class="st">'Jane'</span>):</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(student.name)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="co"># get all students in "Chemistry 101"</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>Student.objects.<span class="bu">filter</span>(classroom__name<span class="op">=</span><span class="st">'Chemistry 101'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Common pitfalls</strong></p>
+<ul>
+<li><strong>Bad Design</strong> - A poorly designed database isn’t saved by using an ORM. (In fact, it can make it worse.)
+<ul>
+<li>Understanding normalization &amp; denormalization tradeoffs is important.</li>
+</ul></li>
+<li><strong>Python Performance</strong> - ORMs typically spend a lot of time converting between objects and underlying data, which can be very slow.
+<ul>
+<li>Most ORMs have a way to deal in tuples/dictionaries instead of objects, which can be much faster for larger queries.</li>
+</ul></li>
+<li><strong>Complex Queries</strong> - If you have a complex query, it can be hard to write it in an ORM and keep track of the decisions the ORM has made.
+<ul>
+<li>SQL is a powerful language, and it is often more efficient to write a query in SQL than to try to write it in an ORM and hope it does what you’re expecting.</li>
+</ul></li>
+<li><strong>N+1 Queries</strong> - When you have a list of objects, and you want to get some related data for each of them, you often end up with a query for each object.
+<ul>
+<li><code>select_related</code> or <code>prefetch_related</code> in Django, or <code>joinedload</code> in SQLAlchemy can help with this, but require an understanding of when the ORM is doing JOINs.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
