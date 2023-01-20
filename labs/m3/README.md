@@ -57,13 +57,13 @@ Take a look at this table's schema:
     sqlite3> .schema roles
     CREATE TABLE roles (
         bioguide_id VARCHAR NOT NULL,
-        role_type VARCHAR NOT NULL,
+        chamber VARCHAR NOT NULL,
         state VARCHAR NOT NULL,
         district INTEGER,
         party VARCHAR NOT NULL,
         start_date DATE NOT NULL,
-        end_date DATE NOT NULL,
-        FOREIGN KEY(bioguide_id) REFERENCES legislators(bioguide_id)
+        end_date DATE,
+        FOREIGN KEY (bioguide_id) REFERENCES legislators (bioguide_id)
         );
 
 1. First, just using the `roles` table, write a query to find the top 10 house seats that have had the most different people serve in them.  (Note: our data does not include all historical data, so this is not an accurate picture.)
