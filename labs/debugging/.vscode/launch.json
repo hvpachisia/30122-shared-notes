@@ -4,7 +4,7 @@
             "name": "Module",
             "type": "python",
             "request": "launch",
-            "pythonPath": "/Users/jamesturk/Library/Caches/pypoetry/virtualenvs/debug-example-qbGeQ12c-py3.10/bin/python",
+            "pythonPath": "${workspaceFolder}/.venv/bin/python",
             "cwd": "${workspaceFolder}",
             "module": "textgen",
             "args": [
